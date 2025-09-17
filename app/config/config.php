@@ -64,7 +64,7 @@ $config['VERSION']                 = '4.2.2';
 | -------------------------------------------------------------------
 | Values: development and production
 */
-$config['ENVIRONMENT']             = 'production';
+$config['ENVIRONMENT']             = 'development';
 
 /*
 |--------------------------------------------------------------------------
@@ -79,8 +79,7 @@ $config['ENVIRONMENT']             = 'production';
 | WARNING: You MUST set this value!
 |
 */
-// $config['base_url'] 				= 'https://deliverio-shirin.onrender.com/';
-$config['base_url'] 				= 'http://localhost:3000';
+$config['base_url'] 				= 'https://deliverio-shirin.onrender.com/';
 
 /*
 |--------------------------------------------------------------------------
