@@ -42,19 +42,25 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |
 |
 */
-$router ->get('/', 'WelcomeSCD::index');
-$router ->get('/profile/{fname}/{lname}', 'WelcomeSCD::profile');
-$router ->get('/get-all', 'StudentsController::get_all');
-$router ->get('/create', 'StudentsController::create');
-$router ->get('/update', 'StudentsController::update');
-$router ->get('/delete', 'StudentsController::delete');
+// $router ->get('/', 'WelcomeSCD::index');
+// $router ->get('/profile/{fname}/{lname}', 'WelcomeSCD::profile');
+// $router ->get('/get-all', 'StudentsController::get_all');
+// $router ->get('/create', 'StudentsController::create');
+// $router ->get('/update', 'StudentsController::update');
+// $router ->get('/delete', 'StudentsController::delete');
 
-$router ->get('/read', 'StudentsController::read');
+$router ->get('/', 'StudentController::index');
+$router ->get('/students', 'StudentController::read');
+$router ->match('/create', 'StudentController::index', ['GET', 'POST']);
+$router ->match('/update', 'StudentController::update', ['GET', 'POST']);
+$router ->post('/delete', 'StudentController::delete');
 
-$router ->get('/students', 'StudentsController::show_form');
-$router ->post('/students', 'StudentsController::show_form');
 
 
-$router->post('/students/update', 'StudentsController::update_student');
-$router->post('/students/delete/', 'StudentsController::delete_student');
+// $router ->get('/students', 'StudentsController::show_form');
+// $router ->post('/students', 'StudentsController::show_form');
+
+
+// $router->post('/students/update', 'StudentsController::update_student');
+// $router->post('/students/delete/', 'StudentsController::delete_student');
 

@@ -1,16 +1,17 @@
 <?php
-defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
+defined('PREVENT_DIRECT_ACCESS') or exit('No direct script access allowed');
 
 /**
  * Controller: StudentsController
- * 
+ *
  * Automatically generated via CLI.
  */
-class StudentsController extends Controller {
+class StudentsController extends Controller
+{
     public function __construct()
     {
         parent::__construct();
-                $this->call->database();
+        $this->call->database();
         $this->call->model("StudentsModel");
 
     }
@@ -22,113 +23,133 @@ class StudentsController extends Controller {
 
     public function get_all(): void
     {
-        var_dump(value: $this-> StudentsModel->all()); 
+        var_dump(value: $this->StudentsModel->all());
     }
 
-    function create(): void
+    public function create(): void
     {
-        $data= array(
-            'last_name'=> 'Deliveio',
+        $data = [
+            'last_name'  => 'Deliveio',
             'first_name' => 'Shirin',
-            'email' => 'deliverio@gmail.com'
-        );
-        if($this->StudentsModel->insert($data)){
+            'email'      => 'deliverio@gmail.com',
+        ];
+        if ($this->StudentsModel->insert($data)) {
             echo 'Inserted';
         }
-       
+
     }
 
-    function update(): void
+    public function show_form()
+    {
+
+        // DB Connection
+        $conn = new mysqli("localhost", "root", "", "mockdata");
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Handle insert
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $last_name  = $_POST['last_name'] ?? '';
+            $first_name = $_POST['first_name'] ?? '';
+            $email      = $_POST['email'] ?? '';
+
+            $stmt = $conn->prepare("INSERT INTO students (last_name, first_name, email) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $last_name, $first_name, $email);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        // Get all students
+        $result   = $conn->query("SELECT * FROM students");
+        $students = $result->fetch_all(MYSQLI_ASSOC);
+        $conn->close();
+
+        require __DIR__ . '/../views/students_view.php';
+    }
+
+    public function update(): void
     {
         $data = $this->StudentsModel->update(1, [
-            'last_name'=> 'maranan',
-            'first_name' => 'Chisty'
+            'last_name'  => 'maranan',
+            'first_name' => 'Chisty',
 
         ]);
 
-        if($data){
+        if ($data) {
             echo 'Updated';
         }
     }
 
-    function delete(): void 
+    public function delete(): void
     {
-        
-        if($this->StudentsModel->delete(1)){
+
+        if ($this->StudentsModel->delete(1)) {
             echo 'Deleted';
         }
 
-       
     }
 
-    public function read()
+    public function update_student()
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id         = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+            $last_name  = $_POST['last_name'] ?? '';
+            $first_name = $_POST['first_name'] ?? '';
+            $email      = $_POST['email'] ?? '';
 
-        $data['students'] = $this->StudentsModel->all();
-        $this->call->view('students_page', $data);
-    }
+            $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
 
-     public function update_student()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-        $last_name = $_POST['last_name'] ?? '';
-        $first_name = $_POST['first_name'] ?? '';
-        $email = $_POST['email'] ?? '';
+            $stmt = $conn->prepare("UPDATE students SET last_name = ?, first_name = ?, email = ? WHERE id = ?");
+            $stmt->bind_param("sssi", $last_name, $first_name, $email, $id);
 
-        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+            if ($stmt->execute()) {
+                header("Location: /students");
+                exit;
+            } else {
+                echo "Failed to update student.";
+            }
 
-        $stmt = $conn->prepare("UPDATE students SET last_name = ?, first_name = ?, email = ? WHERE id = ?");
-        $stmt->bind_param("sssi", $last_name, $first_name, $email, $id);
-
-        if ($stmt->execute()) {
-            header("Location: /students"); 
-            exit;
+            $stmt->close();
+            $conn->close();
         } else {
-            echo "Failed to update student.";
+            echo "Invalid Request";
         }
-
-        $stmt->close();
-        $conn->close();
-    } else {
-        echo "Invalid Request";
     }
-}
 
+    public function delete_student()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 
-   public function delete_student() 
-   {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+            if ($id <= 0) {
+                echo "❌ Invalid student ID.";
+                exit;
+            }
 
-        if ($id <= 0) {
-            echo "❌ Invalid student ID.";
-            exit;
-        }
+            $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
+            }
 
-        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+            $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
+            $stmt->bind_param("i", $id);
 
-        $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
-        $stmt->bind_param("i", $id);
+            if ($stmt->execute()) {
+                header("Location: /students");
+                exit;
+            } else {
+                echo "❌ Failed to delete student: " . $stmt->error;
+            }
 
-        if ($stmt->execute()) {
-            header("Location: /students");
-            exit;
+            $stmt->close();
+            $conn->close();
         } else {
-            echo "❌ Failed to delete student: " . $stmt->error;
+            echo "Invalid Request (delete only accepts POST).";
         }
-
-        $stmt->close();
-        $conn->close();
-    } else {
-        echo "Invalid Request (delete only accepts POST).";
-    }
     }
 
 }
