@@ -1,79 +1,60 @@
 <?php
-defined('PREVENT_DIRECT_ACCESS') or exit('No direct script access allowed');
+defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 
-/**
- * Controller: StudentsController
- *
- * Automatically generated via CLI.
- */
-class StudentController extends Controller
+class Students extends Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->call->database();
-        $this->call->model("StudentsModel");
-
+        $this->call->model('StudentsModel');
     }
 
-    public function index(): void
+    // READ – list all
+    public function index()
     {
-        $data['students'] = $this->StudentsModel->all();
-        $this->call->view('students_page');
+        $data['students'] = $this->StudentsModel->get_all();
+        $this->call->view('students_view', $data);
     }
 
-    public function read()
+    // CREATE – show form
+    public function create()
     {
-        $data['students'] = $this->StudentsModel->all();
-        $this->call->view('students_page', $data);
+        $this->call->view('student_create');
     }
 
-    public function insert()
+    // CREATE – save new record
+    public function store()
     {
-        // Handle insert
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $last_name  = $_POST['last_name'] ?? '';
-            $first_name = $_POST['first_name'] ?? '';
-            $email      = $_POST['email'] ?? '';
-
-            $this->UserModel->insert($last_name, $first_name, $email);
-        }
-
-        return redirect('students');
+        $this->StudentsModel->insert([
+            'first_name' => $this->io->post('first_name'),
+            'last_name'  => $this->io->post('last_name'),
+            'email'      => $this->io->post('email')
+        ]);
+        redirect('/students');
     }
 
-    public function update_student()
+    // UPDATE – show edit form
+    public function edit($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id         = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-            $last_name  = $_POST['last_name'] ?? '';
-            $first_name = $_POST['first_name'] ?? '';
-            $email      = $_POST['email'] ?? '';
-
-            $this->StudentsModel->filter(['id' => $id])->update($last_name, $first_name, $email);
-
-            return redirect('students');
-        } else {
-            return redirect('students');
-        }
+        $data['student'] = $this->StudentsModel->get_where(['id' => $id]);
+        $this->call->view('student_edit', $data);
     }
 
-    public function delete_student()
+    // UPDATE – save changes
+    public function update($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+        $this->StudentsModel->update($id, [
+            'first_name' => $this->io->post('first_name'),
+            'last_name'  => $this->io->post('last_name'),
+            'email'      => $this->io->post('email')
+        ]);
+        redirect('/students');
+    }
 
-            if ($id <= 0) {
-                echo "❌ Invalid student ID.";
-                exit;
-            }
-
-            $this->StudentsModel->filter(['id' => $id])->delete();
-
-            return redirect('students');
-
-        } else {
-            echo "Invalid Request (delete only accepts POST).";
-        }
+    // DELETE
+    public function destroy($id)
+    {
+        $this->StudentsModel->delete($id);
+        redirect('/students');
     }
 }
