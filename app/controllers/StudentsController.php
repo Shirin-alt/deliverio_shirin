@@ -10,8 +10,12 @@ class StudentsController extends Controller {
     public function __construct()
     {
         parent::__construct();
-       
 
+    }
+
+    public function index(): void
+    {
+        redirect("students");
     }
 
     public function get_all(): void
@@ -58,7 +62,7 @@ class StudentsController extends Controller {
      public function show_form() {
 
         // DB Connection
-        $conn = new mysqli("localhost", "root", "", "mockdata");
+        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
@@ -91,7 +95,7 @@ class StudentsController extends Controller {
         $first_name = $_POST['first_name'] ?? '';
         $email = $_POST['email'] ?? '';
 
-        $conn = new mysqli("localhost", "root", "", "mockdata");
+        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
@@ -124,7 +128,7 @@ class StudentsController extends Controller {
             exit;
         }
 
-        $conn = new mysqli("localhost", "root", "", "mockdata");
+        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
