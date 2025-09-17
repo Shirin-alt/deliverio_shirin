@@ -6,7 +6,7 @@ defined('PREVENT_DIRECT_ACCESS') or exit('No direct script access allowed');
  *
  * Automatically generated via CLI.
  */
-class StudentsController extends Controller
+class StudentController extends Controller
 {
     public function __construct()
     {
