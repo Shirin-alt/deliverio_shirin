@@ -49,6 +49,8 @@ $router ->get('/create', 'StudentsController::create');
 $router ->get('/update', 'StudentsController::update');
 $router ->get('/delete', 'StudentsController::delete');
 
+$router ->get('/read', 'StudentsController::read');
+
 $router ->get('/students', 'StudentsController::show_form');
 $router ->post('/students', 'StudentsController::show_form');
 

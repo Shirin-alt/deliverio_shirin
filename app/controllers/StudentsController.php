@@ -10,6 +10,8 @@ class StudentsController extends Controller {
     public function __construct()
     {
         parent::__construct();
+                $this->call->database();
+        $this->call->model("StudentsModel");
 
     }
 
@@ -41,8 +43,7 @@ class StudentsController extends Controller {
         $data = $this->StudentsModel->update(1, [
             'last_name'=> 'maranan',
             'first_name' => 'Chisty'
-            
-            
+
         ]);
 
         if($data){
@@ -52,39 +53,19 @@ class StudentsController extends Controller {
 
     function delete(): void 
     {
-         
+        
         if($this->StudentsModel->delete(1)){
             echo 'Deleted';
         }
 
        
     }
-     public function show_form() {
 
-        // DB Connection
-        $conn = new mysqli("sql12.freesqldatabase.com", "sql12798929", "akhlCbceII", "sql12798929");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+    public function read()
+    {
 
-        // Handle insert
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $last_name  = $_POST['last_name'] ?? '';
-            $first_name = $_POST['first_name'] ?? '';
-            $email      = $_POST['email'] ?? '';
-
-            $stmt = $conn->prepare("INSERT INTO students (last_name, first_name, email) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $last_name, $first_name, $email);
-            $stmt->execute();
-            $stmt->close();
-        }
-
-        // Get all students
-        $result = $conn->query("SELECT * FROM students");
-        $students = $result->fetch_all(MYSQLI_ASSOC);
-        $conn->close();
-
-        require __DIR__ . '/../views/students_view.php';
+        $data['students'] = $this->StudentsModel->all();
+        $this->call->view('students_page', $data);
     }
 
      public function update_student()
